@@ -78,4 +78,39 @@ switch($dita){
     default:
     echo "Dite tjeter";
 }
+echo "<br>";
+echo "<br>";
+echo "<br>";
+echo "<br>";
+echo "<br>";
+$x=1;
+while($x<=5){
+    echo "Numri eshte: $x <br>";
+    $x++;
+}
+echo "<br>";
+echo "<br>";
+$y=1;
+do{
+    echo "Numri eshte: $y <br>";
+    $y++;
+}while($y>=5);
+echo "<br>";
+echo "<br>";
+for($z=0; $z<=100; $z++){
+    echo "Numri eshte: $z <br>";
+}
+echo "<br>";
+echo "<br>";
+$cars = array("BMW","FERRARI","LAMBORGHINI","MUSTANG");
+foreach($cars as $bestcar){
+echo "$bestcar <br>";
+}
+echo "<br>";
+echo "<br>";
+  
+$age = array("John" => 18, "Michael" => 20, "Joe" => 13);
+ foreach($age as $key => $value){
+    echo "$key = $value  <br>";
+ }
 ?>
