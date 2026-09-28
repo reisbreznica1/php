@@ -32,5 +32,16 @@ for($i=0; $i<10; $i++){
 }
 
 
+$grades = array("Math" => "5", "Art" => "5", "Histori" => "4", "Musik" => "4");
+
+echo "Art grade is:" . $grades["Art"];
+echo "<br>";
+echo "<br>";
+
+foreach($grades as $subject => $grade){
+    echo "Subject: " . $subject . ", Grade: " . $grade;
+    echo "<br>";
+}
+
 
 ?>
