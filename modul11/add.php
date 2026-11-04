@@ -1,27 +1,34 @@
 <?php
 
-include_once("config.php");
+	include_once('config.php');
+
+	if(isset($_POST['submit']))
+	{
+
+        $username = $_POST['username'];
+	    $name = $_POST['name'];
+		$surname = $_POST['surname'];
+		$email = $_POST['email'];
 
 
-if(isset($_POST['submit'])){
+			$sql = "INSERT INTO users(username,name,surname,email) VALUES (:username, :name, :surname, :email)";
 
-$namw = $_POST['name'];
+			$insertSql = $conn->prepare($sql);
 
-$username = $_POST['username'];
+			$insertSql->bindParam(':username', $username);
+			$insertSql->bindParam(':name', $name);
+			$insertSql->bindParam(':surname', $surname);
+			$insertSql->bindParam(':email', $email);
 
-$email = $_POST['email'];
+			$insertSql->execute();
 
-$sql = "INSERT INTO user(name, username, email) VALUES (:name, :username, :email)";
+			echo "The user has been added successfully";
 
-$sqlQuery = $conn->prepare($sql);
+			echo "<br>";
 
-$sqlQuery->bindparam(':name', $name);
-$sqlQuery->bindparam(':username', $username);
-$sqlQuery->bindparam(':email', $email);
+			echo "<a href='dashboard.php'>Dashboard</a>";
 
-$sqlQuery->execute();
+	}
 
-echo"INSERTED"
-}
 
 ?>
