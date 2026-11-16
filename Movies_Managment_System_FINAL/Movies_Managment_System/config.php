@@ -3,7 +3,7 @@
 $user="root";
 $pass="";
 $server="localhost";
-$dbname="mms";
+$dbname="movie";
 
 try {
 	//Creating a PDO to connect with database

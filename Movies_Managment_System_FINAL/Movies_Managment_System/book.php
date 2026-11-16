@@ -1,46 +1,40 @@
-<?php 
- /*Creating a session  based on a session identifier, passed via a GET or POST request.
-  We will include config.php for connection with database.
-  */
+<?php
 
-	session_start();
+session_start();
 
-	include_once('config.php');
+include_once('config.php');
 
-	//Getting values 'id' and 'movie_id' using $_SESSION
-	$user_id = $_SESSION['id'];
-    $movie_id = $_SESSION['movie_id'];
+if (!isset($_SESSION['id']) || !isset($_SESSION['movie_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-	//Getting some of data from details.php form
-	$nr_tickets = $_POST['nr_tickets'];
-	$date = $_POST['date'];
-	$time = $_POST['time'];
-	//Inserting the new data into database
-	$sql = "INSERT INTO bookings(user_id, movie_id, nr_tickets, date, time) VALUES (:user_id, :movie_id, :nr_tickets, :date, :time)";
+$user_id = $_SESSION['id'];
+$movie_id = $_SESSION['movie_id'];
 
-	$insertBooking = $conn->prepare($sql);
+$nr_tickets = $_POST['nr_tickets'] ?? '';
+$date = $_POST['date'] ?? '';
+$time = $_POST['time'] ?? '';
 
-	$insertBooking->bindParam(":user_id", $user_id);
-	$insertBooking->bindParam(":movie_id", $movie_id);
-	$insertBooking->bindParam(":nr_tickets", $nr_tickets);
-	$insertBooking->bindParam(":date", $date);
-	$insertBooking->bindParam(":time", $time);
+if (empty($nr_tickets) || empty($date) || empty($time) || $nr_tickets < 1) {
+    echo "Please fill in all fields correctly.";
+    exit();
+}
 
-	$insertBooking->execute();
+$sql = "INSERT INTO bookings (user_id, movie_id, nr_tickets, date, time, is_approved)
+        VALUES (:user_id, :movie_id, :nr_tickets, :date, :time, 'false')";
 
-	header("Location: home.php");
+$insertBooking = $conn->prepare($sql);
 
-	
-	
+$insertBooking->bindParam(":user_id", $user_id);
+$insertBooking->bindParam(":movie_id", $movie_id);
+$insertBooking->bindParam(":nr_tickets", $nr_tickets);
+$insertBooking->bindParam(":date", $date);
+$insertBooking->bindParam(":time", $time);
 
+$insertBooking->execute();
 
+header("Location: home.php");
+exit();
 
-
-
-
-
-
-
-
-
- ?>
+?>

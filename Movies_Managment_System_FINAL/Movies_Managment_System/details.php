@@ -1,19 +1,27 @@
-<?php 
-  /*Creating a session  based on a session identifier, passed via a GET or POST request.
-  We will include config.php for connection with database.
-  We will get the data of films from database based on each films ids.
-  Creating a form which will post some of those datas into book.php file
-  */
-	session_start();
-  
-   include_once('config.php');
-   $id = $_GET['id'];
-   $_SESSION['movie_id'] = $id;
-   $sql = "SELECT * FROM movies WHERE id=:id";
-   $selectMovie = $conn->prepare($sql);
-   $selectMovie->bindParam(":id",$id);
-   $selectMovie->execute();
-   $movie_data = $selectMovie->fetch();
+<?php
+session_start();
+
+include_once('config.php');
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$id = $_GET['id'];
+$_SESSION['movie_id'] = $id;
+
+$sql = "SELECT * FROM movies WHERE id = :id";
+$selectMovie = $conn->prepare($sql);
+$selectMovie->bindParam(":id", $id);
+$selectMovie->execute();
+
+$movie_data = $selectMovie->fetch(PDO::FETCH_ASSOC);
+
+if (!$movie_data) {
+    header("Location: index.php");
+    exit();
+}
 ?>
 
  <!DOCTYPE html>
