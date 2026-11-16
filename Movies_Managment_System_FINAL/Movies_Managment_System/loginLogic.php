@@ -1,84 +1,56 @@
-<?php 
-	/*Creating a session  based on a session identifier, passed via a GET or POST request.
-  We will include config.php for connection with database.
-  We will get the datas from login.php file and check if any of those datas is incorrect or doesn't exist
-   when Sign in button is clicked in login.php file
-  */
-	session_start();
 
-	include_once('config.php');
+<?php
 
-	if(isset($_POST['submit']))
-	{
-		//We will collect username from form data after submitting an HTML form with method="post".
-		$username = $_POST['username'];
+session_start();
 
-		//We will collect password from form data after submitting an HTML form with method="post".
-		$password = $_POST['password'];
+include_once('config.php');
 
-		//Check if any of username and password variables is empty
-		if (empty($username) || empty($password)) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['submit'])) {
+    header("Location: login.php");
+    exit();
+}
 
-			//If true, echo this message
-			echo "Please fill in all fields
-			";
+$username = trim($_POST['username'] ?? '');
+$password = $_POST['password'] ?? '';
 
-		}
-		else{
+if (empty($username) || empty($password)) {
+    die("Please fill in all fields.");
+}
 
-			//If false, we will create a query to select id,emri,username,email,password,is_admin from users table based on each username
-			$sql = "SELECT id, emri, username, email, password, is_admin FROM users WHERE username=:username";
+$sql = "SELECT id, emri, username, email, password, is_admin
+        FROM users
+        WHERE username = :username";
 
-			//We use prepared statement as a feature used to execute the same sql statement repeatedly with high efficiency
-			$selectUser = $conn->prepare($sql);
+$selectUser = $conn->prepare($sql);
+$selectUser->bindParam(":username", $username);
+$selectUser->execute();
 
-			//bindParam binds a parameter to the specified variable name, so we bind :username to $username variable
+$data = $selectUser->fetch();
 
-			$selectUser->bindParam(":username", $username);
+if (!$data) {
+    die("The user does not exist.");
+}
 
-			/* At a later time, the application binds the values to the parameters, and the database executes the statement.
-			 The application may execute the statement as many times as it wants with different values */
+if (password_verify($password, $data['password'])) {
 
-			$selectUser->execute();
+    session_regenerate_id(true);
 
-			/*The fetch() method allows you to fetch a row from a result set associated with a PDOStatement object. Internally,
-			 the fetch() method fetches a single row from a result set and moves the internal pointer to the next row in the result set.*/
+    $_SESSION['id'] = $data['id'];
+    $_SESSION['username'] = $data['username'];
+    $_SESSION['email'] = $data['email'];
+    $_SESSION['emri'] = $data['emri'];
+    $_SESSION['is_admin'] = $data['is_admin'];
 
-			$data = $selectUser->fetch();
+    if ($data['is_admin'] == 1) {
+        header("Location: dashboard.php");
+    } else {
+        header("Location: home.php");
+    }
 
-			//We will check if $data value(which in this case would be username) does not exist:
-			if ($data == false) {
-				
+    exit();
 
-				//If the condition is true, then we will echo this message
-				echo "The user does not exist
-				";
-			}else{
+} else {
+    die("The password is not valid.");
+}
 
-					//If condition is not true, we will check if password in database matches the password that we wrote 
-				if (password_verify($password, $data['password'])) {
-					//If this condition is true, we will store $data values to $_SESSION variables
-					$_SESSION['id'] = $data['id'];
-					$_SESSION['username'] = $data['username'];
-					$_SESSION['email'] = $data['email'];
-					$_SESSION['emri'] = $data['emri'];
-					$_SESSION['is_admin'] = $data['is_admin'];
-
-					//And head to dashboard.php
-					header('Location: dashboard.php');
-				}
-				else{
-					//If the second condition is not true, then we will echo this message:
-					echo "The password is not valid
-					";
-				}
-
-			}
-
-		}
-
-
-	}
-
-
- ?>
+?>

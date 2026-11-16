@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -16,13 +17,14 @@ $nr_tickets = $_POST['nr_tickets'] ?? '';
 $date = $_POST['date'] ?? '';
 $time = $_POST['time'] ?? '';
 
-if (empty($nr_tickets) || empty($date) || empty($time) || $nr_tickets < 1) {
-    echo "Please fill in all fields correctly.";
-    exit();
+if (!is_numeric($nr_tickets) || $nr_tickets < 1 || empty($date) || empty($time)) {
+    die("Please fill in all fields correctly.");
 }
 
-$sql = "INSERT INTO bookings (user_id, movie_id, nr_tickets, date, time, is_approved)
-        VALUES (:user_id, :movie_id, :nr_tickets, :date, :time, 'false')";
+$sql = "INSERT INTO bookings 
+(user_id, movie_id, nr_tickets, date, time, is_approved)
+VALUES 
+(:user_id, :movie_id, :nr_tickets, :date, :time, 'false')";
 
 $insertBooking = $conn->prepare($sql);
 
