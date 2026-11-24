@@ -22,14 +22,14 @@
     <div class="contact-html">
         <div class="contact" style="margin-top:10px; border-radius: 15px;">
             <h1 style="text-align: center;">KONTAKTI</h1>
-            <form>
+            <form action="send_message.php" method="POST">
                 <label for="name">Emri:</label><br>
                 <input type="text" id="name" name="name" required><br><br>
                 <label for="email">Email:</label><br>
                 <input type="email" id="email" name="email" required><br><br>
                 <label for="message">Mesazhi:</label><br>
                 <textarea id="message" name="message" rows="5" required></textarea><br><br>
-                <button type="submit">Dergo mesazhin</button>
+                <button type="submit" name="send">Dergo mesazhin</button>
             </form>
         </div>
     </div>
